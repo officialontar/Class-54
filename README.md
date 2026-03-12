@@ -44,59 +44,94 @@ The project demonstrates a clean Django project structure with reusable template
 
 ---
 
-## 🛠️ Tech Stack
+
+## 🛠️ Tech Stack & Technologies Used
 
 - **Backend:** Django
-- **Frontend:** HTML, Tailwind CSS
+- **Frontend:** HTML, CSS, JavaScript
+- **JavaScript:** For interactive UI elements
+- **CSS:** For styling
+- **UI Framework:** Tailwind CSS
 - **Database:** SQLite3
 - **Language:** Python
 - **Authentication:** Django Custom User Model
 - **UI Alerts:** SweetAlert2
+- **Image Handling:** Pillow
+
 
 ---
 
 ## 📂 Project Structure
 
 ```bash
-AUTH_ROLE_SYSTEM
+AUTH_ROLE_SYSTEM/
+├── accounts/
+│   ├── __pycache__/
+│   ├── migrations/
+│   │   ├── __init__.py
+│   │   ├── 0001_initial.py
+│   │   └── 0002_application.py
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
 │
-├─ accounts
-│   ├─ tests.py
-│   ├─ urls.py
-│   └─ views.py
+├── auth_role_system/
+│   ├── __pycache__/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
 │
-├─ auth_role_system
-│   ├─ __pycache__
-│   ├─ __init__.py
-│   ├─ asgi.py
-│   ├─ settings.py
-│   ├─ urls.py
-│   └─ wsgi.py
+├── jobs/
+│   ├── __pycache__/
+│   ├── migrations/
+│   │   ├── __init__.py
+│   │   └── 0001_initial.py
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
 │
-├─ media
-│   └─ profile
-│       └─ 300x300_12.2kb.jpg
+├── media/
+│   └── profile/
+│       ├── 300x300_12.2kb.jpg
+│       ├── 300x300_43.2KB.jpg
+│       └── 413x531_28.5kb.jpg
 │
-├─ screenshots
-│   └─ Full_Page.jpeg
+├── screenshots/
+│   └── Full_Page.jpeg
 │
-├─ templates
-│   ├─ accounts
-│   │   ├─ index.html
-│   │   ├─ login.html
-│   │   ├─ profile.html
-│   │   └─ register.html
+├── templates/
+│   ├── accounts/
+│   │   ├── change_password.html
+│   │   ├── edit_recruiter_profile.html
+│   │   ├── index.html
+│   │   ├── login.html
+│   │   ├── profile.html
+│   │   └── register.html
 │   │
-│   ├─ includes
-│   │   ├─ footer.html
-│   │   └─ header.html
+│   ├── includes/
+│   │   ├── footer.html
+│   │   └── header.html
 │   │
-│   └─ base.html
+│   ├── jobs/
+│   │   └── create_new_jobs.html
+│   │
+│   └── base.html
 │
-├─ .gitignore
-├─ db.sqlite3
-├─ manage.py
-└─ README.md
+├── .gitignore
+├── db.sqlite3
+├── manage.py
+├── README.md
+└── requirements.txt
 ```
 
 ---
@@ -302,6 +337,11 @@ if settings.DEBUG:
 - Password Show / Hide Toggle
 - Better Admin Dashboard
 - Search & Filter Features
+- User Authentication
+- Recruiter Profile
+- Job Posting System
+- Job Application System
+- Profile Management
 
 ---
 
