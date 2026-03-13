@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ job.job_title }} | Job Details
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto mt-8 mb-10 px-4">
+
+<div id="jobProfileCard" class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+
+<div class="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-8">
+
+<div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-8">
+
+<div class="flex flex-col md:flex-row items-start gap-8">
+
+{% if job.company_logo %}
+<img src="{{ job.company_logo.url }}"
+style="width:300px;height:300px;object-fit:cover;border-radius:24px"
+class="bg-white p-3 shadow-2xl">
+{% else %}
+<div style="width:300px;height:300px"
+class="rounded-3xl bg-white flex items-center justify-center text-gray-400 text-2xl font-semibold shadow-2xl">
+No Logo
+</div>
+{% endif %}
+
+<div>
+
+<h1 class="text-4xl font-bold text-white flex items-center gap-3">
+
+{{ job.job_title }}
+
+<span class="verified-badge">
+✔ Verified
+</span>
+
+</h1>
+
+<p class="text-white/90 text-xl mt-2">
+{{ job.company_name }}
+</p>
+
+{% if job.recruiter.company_website %}
+
+<a href="{{ job.recruiter.company_website }}"
+target="_blank"
+class="website-link">
+
+🌐 {{ job.recruiter.company_website }}
+
+</a>
+
+{% endif %}
+
+<div class="mt-4 flex flex-wrap gap-3">
+
+<span class="badge">
+{{ job.get_job_type_display }}
+</span>
+
+<span class="badge">
+{{ job.location }}
+</span>
+
+</div>
+
+<div class="mt-4 flex items-center gap-2 text-yellow-300 text-xl">
+
+⭐ ⭐ ⭐ ⭐ ⭐
+
+<span class="text-white text-sm ml-2">
+(4.8 Company Rating)
+</span>
+
+</div>
+
+</div>
+</div>
+
+<div class="self-start">
+
+{% if job.is_closed %}
+
+<span class="status-closed">
+Closed
+</span>
+
+{% else %}
+
+<span class="status-open">
+Open
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+</div>
+
+
+<div class="p-8 md:p-10">
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+<div class="card">
+<p class="label">Vacancies</p>
+<h3 class="value">{{ job.vacancies }}</h3>
+</div>
+
+<div class="card">
+<p class="label">Salary</p>
+<h3 class="value">{{ job.salary }} {{ job.currency }}</h3>
+</div>
+
+<div class="card">
+<p class="label">Opening Date</p>
+<h3 class="value-small">{{ job.opening_date|date:"d F Y" }}</h3>
+</div>
+
+<div class="card">
+<p class="label">Deadline</p>
+
+<h3 class="value-small
+{% if job.is_closed %}
+text-red-600
+{% else %}
+text-green-600
+{% endif %}
+">
+
+{{ job.deadline|date:"d F Y" }}
+
+</h3>
+
+</div>
+
+</div>
+
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+
+<div class="card">
+
+<p class="label">Deadline Countdown</p>
+
+<p id="countdown" class="countdown"></p>
+
+</div>
+
+<div class="card">
+
+<p class="label">Posted On</p>
+
+<p class="value-small">
+
+{{ job.created_at|date:"d F Y, h:i A" }}
+
+</p>
+
+</div>
+
+<div class="card">
+
+<p class="label">Applications</p>
+
+<p class="value-small">
+
+{{ job.applications.count }} Applicants
+
+</p>
+
+</div>
+
+</div>
+
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
+
+<div class="detail-box">
+<h2>Education</h2>
+
+<div class="bullet-text">
+{{ job.education }}
+</div>
+
+</div>
+
+<div class="detail-box">
+<h2>Skills</h2>
+
+<div class="bullet-text">
+{{ job.skills }}
+</div>
+
+</div>
+
+<div class="detail-box">
+<h2>Responsibilities</h2>
+
+<div class="bullet-text">
+{{ job.responsibilities }}
+</div>
+
+</div>
+
+<div class="detail-box">
+<h2>Description</h2>
+
+<div class="bullet-text">
+{{ job.description }}
+</div>
+
+</div>
+
+</div>
+
+
+<div class="mt-10 border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+<a href="{% url 'profile' %}" class="back-btn">
+← Back
+</a>
+
+<a href="{% url 'download_job_pdf' job.id %}"
+class="download-btn">
+Download Job Profile
+</a>
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+<style>
+
+#jobProfileCard{
+animation:fadeSlide 0.8s ease;
+}
+
+@keyframes fadeSlide{
+
+from{
+opacity:0;
+transform:translateY(40px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+.verified-badge{
+background:#22c55e;
+padding:4px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:bold;
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+
+0%{transform:scale(1)}
+
+50%{transform:scale(1.08)}
+
+100%{transform:scale(1)}
+
+}
+
+.website-link{
+display:block;
+margin-top:6px;
+color:#bfdbfe;
+text-decoration:none;
+transition:0.3s;
+}
+
+.website-link:hover{
+color:white;
+text-shadow:0 0 8px rgba(255,255,255,0.8);
+transform:translateX(5px);
+}
+
+.badge{
+padding:6px 14px;
+background:rgba(255,255,255,0.2);
+border-radius:999px;
+font-size:14px;
+font-weight:600;
+color:white;
+}
+
+.status-open{
+background:#22c55e;
+padding:10px 20px;
+border-radius:999px;
+font-weight:bold;
+color:white;
+}
+
+.status-closed{
+background:#ef4444;
+padding:10px 20px;
+border-radius:999px;
+font-weight:bold;
+color:white;
+}
+
+.card{
+background:#f9fafb;
+border:1px solid #eee;
+padding:20px;
+border-radius:16px;
+}
+
+.label{
+font-size:13px;
+color:#6b7280;
+}
+
+.value{
+font-size:22px;
+font-weight:bold;
+}
+
+.value-small{
+font-size:18px;
+font-weight:600;
+}
+
+.countdown{
+font-size:18px;
+font-weight:700;
+color:red;
+}
+
+.detail-box{
+background:#f9fafb;
+padding:22px;
+border-radius:16px;
+border:1px solid #eee;
+}
+
+.detail-box h2{
+font-size:20px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.bullet-text{
+white-space:pre-line;
+line-height:1.9;
+font-size:15px;
+color:#374151;
+}
+
+.back-btn{
+background:#4b5563;
+color:white;
+padding:10px 20px;
+border-radius:10px;
+}
+
+.back-btn:hover{
+background:#111827;
+}
+
+.download-btn{
+background:#2563eb;
+color:white;
+padding:10px 20px;
+border-radius:10px;
+transition:0.3s;
+}
+
+.download-btn:hover{
+background:#22c55e;
+box-shadow:
+0 0 10px #22c55e,
+0 0 20px #22c55e,
+0 0 40px #22c55e;
+}
+
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+
+const deadline=new Date("{{ job.deadline|date:'Y-m-d' }}T23:59:59").getTime()
+
+const countdown=document.getElementById("countdown")
+
+setInterval(function(){
+
+const now=new Date().getTime()
+
+const distance=deadline-now
+
+if(distance<0){
+
+countdown.innerHTML="Expired"
+
+return
+
+}
+
+const days=Math.floor(distance/(1000*60*60*24))
+
+const hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60))
+
+const minutes=Math.floor((distance%(1000*60*60))/(1000*60))
+
+countdown.innerHTML=days+" Days "+hours+" Hours "+minutes+" Minutes"
+
+},1000)
+
+document.getElementById("downloadPdfBtn").addEventListener("click",function(){
+
+const element=document.getElementById("jobProfileCard")
+
+const opt={
+margin:0.3,
+filename:"{{ job.job_title }}.pdf",
+image:{type:'jpeg',quality:1},
+html2canvas:{scale:2},
+jsPDF:{unit:'in',format:'a4',orientation:'portrait'}
+}
+
+html2pdf().set(opt).from(element).save()
+
+})
+
+</script>
+
+{% endblock %}

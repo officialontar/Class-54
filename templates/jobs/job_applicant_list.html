@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Applicants - {{ job.job_title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto my-10">
+
+    <div class="bg-white shadow-xl rounded-xl p-8">
+
+        <div class="border-l-4 border-blue-600 pl-4 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">
+                Applicants for {{ job.job_title }}
+            </h2>
+            <p class="text-gray-500 mt-2">
+                Total Applicants: {{ applicants|length }}
+            </p>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full border text-center">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3 border">Serial ID</th>
+                        <th class="p-3 border">Photo</th>
+                        <th class="p-3 border">Full Name</th>
+                        <th class="p-3 border">Username</th>
+                        <th class="p-3 border">Email</th>
+                        <th class="p-3 border">Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in applicants %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 border">{{ forloop.counter }}</td>
+                        <td class="p-3 border">
+                            {% if item.applicant.profile_pic %}
+                                <img src="{{ item.applicant.profile_pic.url }}" class="w-14 h-14 rounded-full object-cover mx-auto">
+                            {% else %}
+                                <div class="w-14 h-14 rounded-full bg-gray-200 mx-auto"></div>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 border">
+                            {{ item.applicant.first_name }} {{ item.applicant.last_name }}
+                        </td>
+                        <td class="p-3 border">{{ item.applicant.username }}</td>
+                        <td class="p-3 border">{{ item.applicant.email }}</td>
+                        <td class="p-3 border">{{ item.applicant.phone }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="p-6 text-gray-500 font-semibold">
+                            No applicants yet
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 flex justify-between">
+            <a href="{% url 'profile' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg back-btn flex items-center gap-2">
+                ← Back
+            </a>
+
+            <a href="{% url 'recruiter_analytics' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg analytics-btn">
+                View Analytics
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+.back-btn{
+    transition:0.3s;
+}
+.back-btn:hover{
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+}
+
+.analytics-btn{
+    transition:0.3s;
+}
+.analytics-btn:hover{
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+}
+</style>
+
+{% endblock %}

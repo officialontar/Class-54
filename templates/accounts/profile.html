@@ -14,9 +14,10 @@
 
 <!-- ================= RECRUITER PROFILE ================= -->
 
+<!-- profile.html এর recruiter section replace -->
+
 <div class="bg-white shadow-xl rounded-xl p-8 my-12">
 
-<!-- HEADER -->
 <div class="flex items-center justify-between">
 
 <div class="flex items-center gap-6">
@@ -31,7 +32,7 @@ class="w-36 h-36 rounded-full object-cover border-4 border-gray-200">
 </h2>
 
 <p class="text-gray-500">
-Senior HR Manager
+{{ request.user.recruiterprofile.job_title|default:"Senior HR Manager" }}
 </p>
 
 <p class="text-sm text-gray-400">
@@ -39,23 +40,39 @@ Senior HR Manager
 </p>
 
 <p class="text-sm text-gray-400">
-📍 Dhaka, Bangladesh
+📍 {{ request.user.recruiterprofile.location|default:"Dhaka, Bangladesh" }}
 </p>
 
-</div>
+
+
+{% if request.user.recruiterprofile.company_website %}
+<p class="text-sm text-blue-500">
+🌐
+<a href="{{ request.user.recruiterprofile.company_website }}"
+target="_blank"
+class="hover:underline">
+
+{{ request.user.recruiterprofile.company_website }}
+
+</a>
+</p>
+{% endif %}
 
 </div>
 
-<!-- SEARCH -->
-<div class="w-96">
+</div>
+
+<div class="w-96 relative">
 
 <form method="GET" class="flex gap-2">
 
 <input
+id="job-search-input"
 type="text"
 name="q"
 value="{{ request.GET.q }}"
 placeholder="Search job title..."
+autocomplete="off"
 class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
 
 <button
@@ -71,21 +88,28 @@ Clear
 
 </form>
 
+<div id="suggestion-box"
+class="absolute left-0 right-0 top-12 bg-white border rounded-lg shadow-lg hidden z-50 overflow-hidden">
+</div>
+
 </div>
 
 </div>
 
 <hr class="my-6">
 
-<!-- COMPANY OVERVIEW -->
 <h3 class="text-lg font-semibold mb-3">Company Overview</h3>
 
 <p class="text-gray-600 mb-6">
-Tech Solutions Ltd. is a fast-growing software company specializing in enterprise systems, mobile apps, and cloud services.
+{{ request.user.recruiterprofile.company_overview|default:"Tech Solutions Ltd. is a fast-growing software company specializing in enterprise systems, mobile apps, and cloud services." }}
 </p>
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-semibold">Job Posts</h3>
 
-<!-- JOB POSTS -->
-<h3 class="text-lg font-semibold mb-4">Job Posts</h3>
+<a href="{% url 'recruiter_analytics' %}" class="analytics-btn text-white px-5 py-2 rounded-lg">
+View Analytics
+</a>
+</div>
 
 <div class="overflow-x-auto">
 
@@ -97,8 +121,9 @@ Tech Solutions Ltd. is a fast-growing software company specializing in enterpris
 <th class="p-3 border">Serial ID</th>
 <th class="p-3 border">Job Title</th>
 <th class="p-3 border">Deadline</th>
-<th class="p-3 border">Applicants</th>
+<th class="p-3 border">Apply Counts</th>
 <th class="p-3 border">Status</th>
+<th class="p-3 border">Applications</th>
 <th class="p-3 border">Actions</th>
 </tr>
 
@@ -125,31 +150,31 @@ Tech Solutions Ltd. is a fast-growing software company specializing in enterpris
 </td>
 
 <td class="p-3 border">
-
 {% if job.deadline >= today %}
-<span class="text-green-600 font-semibold">
-Available
-</span>
+<span class="text-green-600 font-semibold">Available</span>
 {% else %}
-<span class="text-red-500 font-semibold">
-Closed
-</span>
+<span class="text-red-500 font-semibold">Closed</span>
 {% endif %}
-
 </td>
 
-<td class="p-3 border space-x-2">
+<td class="p-3 border">
+<a href="{% url 'job_applicant_list' job.id %}" class="text-blue-600 hover:underline">
+📄 Applicants
+</a>
+</td>
 
-<a href="#" class="text-blue-600 hover:underline">
-View
+<td>
+
+<a href="{% url 'view_job' job.id %}" class="text-blue-600 hover:text-blue-800 font-medium">
+    👁 View
 </a>
 
-<a href="#" class="text-yellow-600 hover:underline">
-Edit
+<a href="{% url 'edit_job' job.id %}" class="text-orange-500 ml-3">
+✏ Edit
 </a>
 
-<a href="#" class="text-red-600 hover:underline">
-Delete
+<a href="{% url 'delete_job' job.id %}" class="text-red-500 ml-3">
+🗑 Delete
 </a>
 
 </td>
@@ -160,7 +185,7 @@ Delete
 
 <tr>
 
-<td colspan="6" class="text-center p-6">
+<td colspan="7" class="text-center p-6">
 
 {% if request.GET.q %}
 
@@ -191,9 +216,9 @@ No job posts yet
 </table>
 
 </div>
+<br>
+<br>
 
-
-<!-- BUTTON AREA -->
 <div class="flex justify-between mt-8">
 
 <a href="{% url 'edit_recruiter_profile' %}"
@@ -213,74 +238,118 @@ Post New Job
 
 </div>
 
-</div>
-
-
 <style>
-
-/* SEARCH BUTTON */
-
 .search-btn{
-background:#2563eb;
-transition:0.3s;
+    background:#2563eb;
+    transition:0.3s;
 }
-
 .search-btn:hover{
-background:#22c55e;
-box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
 }
-
-/* CLEAR BUTTON */
 
 .clear-btn{
-background:#6b7280;
-transition:0.3s;
+    background:#6b7280;
+    transition:0.3s;
 }
-
 .clear-btn:hover{
-background:#22c55e;
-box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
 }
 
-/* POST JOB */
+.analytics-btn{
+    background:#2563eb;
+    transition:0.3s;
+}
+.analytics-btn:hover{
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+}
 
 .post-btn{
-background:#2563eb;
-transition:0.3s;
+    background:#2563eb;
+    transition:0.3s;
 }
-
 .post-btn:hover{
-background:#22c55e;
-box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
 }
-
-/* EDIT COMPANY PROFILE */
 
 .edit-btn{
-background:#2563eb;
-transition:0.3s;
+    background:#2563eb;
+    transition:0.3s;
 }
-
 .edit-btn:hover{
-background:#22c55e;
-box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
 }
-
-/* EDIT PASSWORD */
 
 .password-btn{
-background:#22c55e;
-transition:0.3s;
+    background:#22c55e;
+    transition:0.3s;
 }
-
 .password-btn:hover{
-background:#2563eb;
-box-shadow:0 0 20px #2563eb,0 0 40px #2563eb;
+    background:#2563eb;
+    box-shadow:0 0 20px #2563eb,0 0 40px #2563eb;
 }
 
+.suggestion-item{
+    padding:10px 14px;
+    cursor:pointer;
+}
+.suggestion-item:hover{
+    background:#f3f4f6;
+}
 </style>
 
+<script>
+const searchInput = document.getElementById("job-search-input");
+const suggestionBox = document.getElementById("suggestion-box");
 
+searchInput.addEventListener("input", function () {
+    const query = this.value.trim();
+
+    if (query.length === 0) {
+        suggestionBox.classList.add("hidden");
+        suggestionBox.innerHTML = "";
+        return;
+    }
+
+    fetch(`/jobs/search-suggestions/?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            suggestionBox.innerHTML = "";
+
+            if (data.results.length > 0) {
+                data.results.forEach(item => {
+                    const div = document.createElement("div");
+                    div.className = "suggestion-item";
+                    div.textContent = item;
+
+                    div.addEventListener("click", function () {
+                        searchInput.value = item;
+                        suggestionBox.classList.add("hidden");
+                    });
+
+                    suggestionBox.appendChild(div);
+                });
+
+                suggestionBox.classList.remove("hidden");
+            } else {
+                suggestionBox.classList.add("hidden");
+            }
+        });
+});
+
+document.addEventListener("click", function (e) {
+    if (!searchInput.contains(e.target) && !suggestionBox.contains(e.target)) {
+        suggestionBox.classList.add("hidden");
+    }
+});
+</script>
+
+
+</div>
 <!-- ================= END RECRUITER ================= -->
 
 
@@ -344,7 +413,7 @@ box-shadow:0 0 20px #2563eb,0 0 40px #2563eb;
 
 {% endif %}
 
-</div>
+
 
 {% endif %}
 

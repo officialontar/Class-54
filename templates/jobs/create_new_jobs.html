@@ -53,13 +53,30 @@ Create New Job
                     class="input-clean w-full rounded-xl border border-gray-300 px-4 py-3">
                 </div>
 
+                <!-- SALARY WITH CURRENCY -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                         Salary <span class="text-red-500">*</span>
                     </label>
-                    <input type="number" name="salary" required
-                    placeholder="Enter salary amount"
-                    class="w-full rounded-xl border border-gray-300 px-4 py-3">
+
+                    <div class="flex gap-2">
+
+                        <input type="number" name="salary" required
+                        placeholder="Enter salary amount"
+                        class="w-full rounded-xl border border-gray-300 px-4 py-3">
+
+                        <select name="currency"
+                        class="rounded-xl border border-gray-300 px-4 py-3 bg-white">
+
+                            <option value="BDT">BDT</option>
+                            <option value="USD">$ USD</option>
+                            <option value="EUR">€ EUR</option>
+                            <option value="INR">₹ INR</option>
+
+                        </select>
+
+                    </div>
+
                 </div>
 
                 <div>
@@ -222,7 +239,7 @@ document.querySelectorAll('.bullet-textarea').forEach(textarea=>{
 
 textarea.addEventListener('keydown',function(e){
 
-if(e.key==="Enter" && e.ctrlKey){
+if(e.key==="Enter"){
 
 e.preventDefault();
 

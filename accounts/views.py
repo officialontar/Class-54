@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
+from django.contrib.auth import update_session_auth_hash
 
 import jobs
 from jobs.models import Job
@@ -175,7 +176,6 @@ def profile(request):
 
 
 
-
 @login_required
 def edit_recruiter_profile(request):
 
@@ -189,15 +189,64 @@ def edit_recruiter_profile(request):
         user.email = request.POST.get("email")
         user.phone = request.POST.get("phone")
 
-        if request.FILES.get("profile_pic"):
-            user.profile_pic = request.FILES.get("profile_pic")
-
+        recruiter.job_title = request.POST.get("job_title")
+        recruiter.location = request.POST.get("location")
         recruiter.company_name = request.POST.get("company_name")
         recruiter.company_website = request.POST.get("company_website")
+        recruiter.company_overview = request.POST.get("company_overview")
+
+
+        # PROFILE IMAGE
+        if request.FILES.get("profile_pic"):
+            user.profile_pic = request.FILES.get("profile_pic")
 
         user.save()
         recruiter.save()
 
+        messages.success(request, "Profile updated successfully")
         return redirect("profile")
 
-    return render(request,"accounts/edit_recruiter_profile.html")
+    return render(request, "accounts/edit_recruiter_profile.html")
+
+
+
+
+
+@login_required
+def change_password(request):
+
+    if request.method == "POST":
+
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        user = request.user
+
+        # Old password check
+        if not user.check_password(old_password):
+            messages.error(request, "Old password is incorrect.")
+            return redirect("change_password")
+
+        # New password match
+        if new_password != confirm_password:
+            messages.error(request, "New password and confirm password do not match.")
+            return redirect("change_password")
+
+        # Old and new same check
+        if old_password == new_password:
+            messages.error(request, "New password cannot be same as old password.")
+            return redirect("change_password")
+
+        # Password change
+        user.set_password(new_password)
+        user.save()
+
+        # Important: keep user logged in
+        update_session_auth_hash(request, user)
+
+        messages.success(request, "Password changed successfully.")
+
+        return redirect("change_password")
+
+    return render(request, "accounts/change_password.html")

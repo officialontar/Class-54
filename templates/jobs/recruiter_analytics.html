@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}
+Recruiter Analytics
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto my-10">
+
+    <div class="bg-white shadow-xl rounded-xl p-8">
+
+        <div class="border-l-4 border-blue-600 pl-4 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">
+                Recruiter Dashboard Analytics
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+            <div class="bg-blue-50 rounded-xl p-6 shadow">
+                <h3 class="text-sm text-gray-500 mb-2">Total Jobs</h3>
+                <p class="text-3xl font-bold text-blue-600">{{ total_jobs }}</p>
+            </div>
+
+            <div class="bg-green-50 rounded-xl p-6 shadow">
+                <h3 class="text-sm text-gray-500 mb-2">Active Jobs</h3>
+                <p class="text-3xl font-bold text-green-600">{{ active_jobs }}</p>
+            </div>
+
+            <div class="bg-red-50 rounded-xl p-6 shadow">
+                <h3 class="text-sm text-gray-500 mb-2">Closed Jobs</h3>
+                <p class="text-3xl font-bold text-red-600">{{ closed_jobs }}</p>
+            </div>
+
+            <div class="bg-purple-50 rounded-xl p-6 shadow">
+                <h3 class="text-sm text-gray-500 mb-2">Total Applicants</h3>
+                <p class="text-3xl font-bold text-purple-600">{{ total_applicants }}</p>
+            </div>
+
+        </div>
+
+        <div class="bg-gray-50 rounded-xl p-6 shadow">
+            <h3 class="text-xl font-bold mb-4">Applicants Per Job</h3>
+            <canvas id="applicantChart" height="110"></canvas>
+        </div>
+
+        <div class="mt-8 flex justify-between">
+            <a href="{% url 'profile' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg back-btn flex items-center gap-2">
+                ← Back
+            </a>
+
+            <a href="{% url 'create_new_jobs' %}" class="bg-blue-600 text-white px-6 py-2 rounded-lg create-btn">
+                Post New Job
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_data|json_script:"chart-data" }}
+
+<script>
+const labels = JSON.parse(document.getElementById("chart-labels").textContent);
+const data = JSON.parse(document.getElementById("chart-data").textContent);
+
+const ctx = document.getElementById("applicantChart").getContext("2d");
+
+new Chart(ctx, {
+    type: "bar",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Applicants",
+            data: data,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+</script>
+
+<style>
+.back-btn{
+    transition:0.3s;
+}
+.back-btn:hover{
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+}
+
+.create-btn{
+    transition:0.3s;
+}
+.create-btn:hover{
+    background:#22c55e;
+    box-shadow:0 0 20px #22c55e,0 0 40px #22c55e;
+}
+</style>
+
+{% endblock %}

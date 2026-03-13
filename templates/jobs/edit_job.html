@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Edit Job - {{ job.job_title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+
+<h2 class="text-2xl font-bold text-center mb-8">
+Edit Job
+</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<div class="grid grid-cols-2 gap-x-12 gap-y-8">
+
+<div>
+<label class="font-semibold">Job Title</label>
+<input type="text"
+name="job_title"
+value="{{ job.job_title }}"
+class="border w-full p-2 rounded">
+</div>
+
+<div>
+<label class="font-semibold">Company Name</label>
+<input type="text"
+name="company_name"
+value="{{ job.company_name }}"
+class="border w-full p-2 rounded">
+</div>
+
+<div>
+<label class="font-semibold">Vacancies</label>
+<input type="number"
+name="vacancies"
+value="{{ job.vacancies }}"
+class="border w-full p-2 rounded">
+</div>
+
+<div class="grid grid-cols-2 gap-2">
+
+<div>
+<label class="font-semibold">Salary</label>
+<input type="number"
+name="salary"
+value="{{ job.salary }}"
+class="border w-full p-2 rounded">
+</div>
+
+<div>
+<label class="font-semibold">Currency</label>
+
+<select name="currency" class="border w-full p-2 rounded">
+
+<option value="BDT" {% if job.currency == "BDT" %}selected{% endif %}>BDT ৳</option>
+
+<option value="USD" {% if job.currency == "USD" %}selected{% endif %}>USD $</option>
+
+<option value="EURO" {% if job.currency == "EURO" %}selected{% endif %}>EURO €</option>
+
+<option value="INR" {% if job.currency == "INR" %}selected{% endif %}>INR ₹</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div>
+<label class="font-semibold">Job Type</label>
+
+<select name="job_type" class="border w-full p-2 rounded">
+
+<option value="Full Time" {% if job.job_type == "Full Time" %}selected{% endif %}>Full Time</option>
+
+<option value="Part Time" {% if job.job_type == "Part Time" %}selected{% endif %}>Part Time</option>
+
+<option value="Remote Job" {% if job.job_type == "Remote Job" %}selected{% endif %}>Remote Job</option>
+
+</select>
+
+</div>
+
+<div>
+<label class="font-semibold">Location</label>
+<input type="text"
+name="location"
+value="{{ job.location }}"
+class="border w-full p-2 rounded">
+</div>
+
+<div>
+<label class="font-semibold">Opening Date</label>
+<input type="date"
+name="opening_date"
+value="{{ job.opening_date|date:'Y-m-d' }}"
+class="border w-full p-2 rounded">
+</div>
+
+<div>
+<label class="font-semibold">Deadline</label>
+<input type="date"
+name="deadline"
+value="{{ job.deadline|date:'Y-m-d' }}"
+class="border w-full p-2 rounded">
+</div>
+
+<div>
+
+<label class="font-semibold">Old Logo</label>
+
+{% if job.company_logo %}
+
+<img src="{{ job.company_logo.url }}"
+style="width:120px;height:120px;border-radius:8px;object-fit:cover;margin-top:5px;">
+
+{% else %}
+
+<p>No Image</p>
+
+{% endif %}
+
+</div>
+
+<div>
+
+<label class="font-semibold">Upload New Logo</label>
+
+<input type="file"
+name="company_logo"
+class="border w-full p-2 rounded mt-2">
+
+</div>
+
+</div>
+
+
+<div class="mt-6">
+
+<label class="font-semibold">Education</label>
+
+<textarea
+name="education"
+class="border w-full p-3 rounded mt-2"
+rows="4">{{ job.education }}</textarea>
+
+</div>
+
+
+<div class="mt-6">
+
+<label class="font-semibold">Responsibilities</label>
+
+<textarea
+name="responsibilities"
+class="border w-full p-3 rounded mt-2"
+rows="4">{{ job.responsibilities }}</textarea>
+
+</div>
+
+
+<div class="mt-6">
+
+<label class="font-semibold">Skills</label>
+
+<textarea
+name="skills"
+class="border w-full p-3 rounded mt-2"
+rows="4">{{ job.skills }}</textarea>
+
+</div>
+
+
+<div class="mt-6">
+
+<label class="font-semibold">Description</label>
+
+<textarea
+name="description"
+class="border w-full p-3 rounded mt-2"
+rows="5">{{ job.description }}</textarea>
+
+</div>
+
+
+<div class="mt-6">
+
+<label class="font-semibold">Created Date</label>
+
+<input
+type="text"
+value="{{ job.created_at|date:'d F Y, h:i A' }}"
+readonly
+class="border w-full p-2 rounded bg-gray-100">
+
+</div>
+
+
+<div class="flex justify-between mt-8">
+
+<a href="{% url 'profile' %}"
+class="bg-gray-600 text-white px-6 py-2 rounded transition duration-300 hover:bg-gray-800">
+
+← Back
+
+</a>
+
+
+<button type="submit" class="update-btn">
+
+Update Job
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<style>
+
+.update-btn{
+background:#2563eb;
+color:white;
+padding:10px 32px;
+border-radius:8px;
+transition:0.3s ease;
+border:none;
+cursor:pointer;
+}
+
+.update-btn:hover{
+
+background:#22c55e;
+
+box-shadow:
+0 0 10px #22c55e,
+0 0 20px #22c55e,
+0 0 40px #22c55e,
+0 0 80px rgba(34,197,94,0.6);
+
+transform:translateY(-1px);
+
+}
+
+</style>
+
+
+{% endblock %}
