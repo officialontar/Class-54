@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import JsonResponse
 from django.utils.timezone import now
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 
 from .models import Job
@@ -22,6 +21,10 @@ from django.conf import settings
 import os
 
 
+try:
+    from reportlab.pdfgen import canvas
+except ImportError:
+    canvas = None
 
 
 # Create your views here.
@@ -438,6 +441,10 @@ def delete_job(request, job_id):
 
 
 def download_job_pdf(request, job_id):
+
+
+    if canvas is None:
+        return HttpResponse("PDF feature is not available on this server.", status=503)
 
 
     job = get_object_or_404(Job, id=job_id)
