@@ -4,14 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import JsonResponse
 from django.utils.timezone import now
-from reportlab.lib.pagesizes import A4
 
 from .models import Job
 from accounts.models import Application
 
 
 from django.http import HttpResponse
-from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor, white, black
 
 
@@ -25,6 +23,26 @@ try:
     from reportlab.pdfgen import canvas
 except ImportError:
     canvas = None
+
+
+
+try:
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import inch
+    from reportlab.lib.colors import HexColor, white, black
+    from reportlab.lib.utils import ImageReader
+    
+except ImportError:
+    canvas = None
+    A4 = None # type: ignore
+    inch = None # type: ignore
+    HexColor = None
+    white = None
+    black = None
+    ImageReader = None
+
+
 
 
 # Create your views here.
@@ -51,7 +69,7 @@ def recruiter_dashboard_analytics(request):
 
     for job in jobs.order_by("id"):
         chart_labels.append(job.job_title)
-        chart_data.append(job.applicant_count)
+        chart_data.append(job.applicant_count) # type: ignore
 
     context = {
         "total_jobs": total_jobs,
@@ -452,9 +470,9 @@ def download_job_pdf(request, job_id):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{job.job_title}.pdf"'
 
-    p = canvas.Canvas(response, pagesize=A4)
+    p = canvas.Canvas(response, pagesize=A4) # type: ignore
 
-    width, height = A4
+    width, height = A4 # type: ignore
     y = height - 60
 
 
@@ -486,7 +504,7 @@ def download_job_pdf(request, job_id):
 
         if os.path.exists(logo_path):
 
-            logo = ImageReader(logo_path)
+            logo = ImageReader(logo_path) # type: ignore
 
             p.drawImage(
                 logo,
@@ -531,7 +549,7 @@ def download_job_pdf(request, job_id):
 
     p.drawString(60, y, job.opening_date.strftime("%d %B %Y"))
     p.drawString(230, y, job.deadline.strftime("%d %B %Y"))
-    p.drawString(380, y, str(job.applications.count()))
+    p.drawString(380, y, str(job.applications.count())) # type: ignore
 
     y -= 30
 
