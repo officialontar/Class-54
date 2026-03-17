@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ job.job_title }} | Job Details
+{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-gray-100 py-10 px-4">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+
+            <!-- HEADER -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-10 text-white">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+
+                    <!-- Left -->
+                    <div class="flex items-start gap-5">
+                        {% if job.company_logo %}
+                            <img src="{{ job.company_logo.url }}"
+                                 alt="{{ job.company_name }}"
+                                 class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg">
+                        {% else %}
+                            <div class="w-24 h-24 rounded-2xl bg-white text-blue-700 flex items-center justify-center font-bold text-4xl shadow-lg">
+                                {{ job.company_name|slice:":1" }}
+                            </div>
+                        {% endif %}
+
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                                {{ job.job_title }}
+                            </h1>
+
+                            <p class="text-xl font-semibold text-white/95 mb-1">
+                                {{ job.company_name }}
+                            </p>
+
+                            {% if job.company_website %}
+                                <a href="{{ job.company_website }}"
+                                   target="_blank"
+                                   class="inline-flex items-center gap-2 text-blue-100 hover:text-white transition duration-300 no-underline">
+                                    <span class="text-lg">🌐</span>
+                                    <span class="font-medium break-all">{{ job.company_website }}</span>
+                                </a>
+                            {% elif job.recruiter.company_website %}
+                                <a href="{{ job.recruiter.company_website }}"
+                                   target="_blank"
+                                   class="inline-flex items-center gap-2 text-blue-100 hover:text-white transition duration-300 no-underline">
+                                    <span class="text-lg">🌐</span>
+                                    <span class="font-medium break-all">{{ job.recruiter.company_website }}</span>
+                                </a>
+                            {% endif %}
+
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="px-4 py-1 rounded-full text-sm font-semibold bg-white/20 text-white">
+                                    💼 {{ job.job_type|title }}
+                                </span>
+
+                                <span class="px-4 py-1 rounded-full text-sm font-semibold bg-white/20 text-white">
+                                    📍 {{ job.location }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right -->
+                    <div class="flex flex-col items-start lg:items-end gap-3">
+                        {% if job.status == "Available" %}
+                            <span class="px-5 py-2 rounded-full text-sm font-bold bg-green-100 text-green-700 shadow-sm">
+                                Available
+                            </span>
+                        {% else %}
+                            <span class="px-5 py-2 rounded-full text-sm font-bold bg-red-100 text-red-600 shadow-sm">
+                                Closed
+                            </span>
+                        {% endif %}
+
+                        <div class="text-left lg:text-right">
+                            <p class="text-sm text-blue-100 mb-1">Posted</p>
+                            <p class="text-lg font-semibold">{{ job.created_at|date:"d M Y, h:i A" }}</p>
+                            <p class="text-sm text-blue-100 mt-1">{{ job.created_at|timesince }} ago</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BODY -->
+            <div class="p-8">
+
+                <!-- TOP INFO CARDS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
+                    <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">🏢 Company</p>
+                        <p class="text-lg font-bold text-gray-800">{{ job.company_name }}</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">📍 Location</p>
+                        <p class="text-lg font-bold text-gray-800">{{ job.location }}</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">👥 Vacancies</p>
+                        <p class="text-lg font-bold text-gray-800">
+                            {{ job.vacancies }}
+                            {% if job.vacancies == 1 %}
+                                Position
+                            {% else %}
+                                Positions
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">💰 Salary</p>
+                        <p class="text-lg font-bold text-gray-800">
+                            {% if job.currency == "USD" %}
+                                <span class="font-bold text-xl">$</span> {{ job.salary }} USD
+                            {% elif job.currency == "EURO" or job.currency == "EUR" %}
+                                <span class="font-bold text-xl">€</span> {{ job.salary }} EURO
+                            {% elif job.currency == "INR" %}
+                                <span class="font-bold text-xl">₹</span> {{ job.salary }} INR
+                            {% elif job.currency == "BDT" %}
+                                <span class="font-black text-2xl text-green-700">৳</span> {{ job.salary }} BDT
+                            {% else %}
+                                {{ job.salary }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- COUNTDOWN -->
+                <div class="mb-8">
+                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                            <div>
+                                <p class="text-sm text-blue-600 font-semibold mb-1">⏳ Application Deadline Countdown</p>
+                                <p class="text-gray-700 font-medium">
+                                    Deadline: {{ job.deadline|date:"d M Y" }}
+                                </p>
+                            </div>
+
+                            <div id="countdown-box"
+                                 data-deadline="{{ job.deadline|date:'Y-m-d' }}"
+                                 class="text-lg md:text-xl font-bold text-blue-700">
+                                Calculating...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN DETAILS -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    <!-- LEFT CONTENT -->
+                    <div class="lg:col-span-2 space-y-6">
+
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">📄 Job Description</h2>
+                            <p class="text-gray-700 leading-8 whitespace-pre-line">
+                                {{ job.description }}
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">🛠 Responsibilities</h2>
+                            <p class="text-gray-700 leading-8 whitespace-pre-line">
+                                {{ job.responsibilities }}
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">🎯 Required Skills</h2>
+                            <p class="text-gray-700 leading-8 whitespace-pre-line">
+                                {{ job.skills }}
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">🎓 Education</h2>
+                            <p class="text-gray-700 leading-8 whitespace-pre-line">
+                                {{ job.education }}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT SIDEBAR -->
+                    <div class="space-y-6">
+
+                        <div class="bg-gray-50 rounded-2xl border border-gray-100 p-6 shadow-sm">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">📌 Job Overview</h3>
+
+                            <div class="space-y-4 text-gray-700">
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Job Title</p>
+                                    <p class="font-semibold">{{ job.job_title }}</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Category</p>
+                                    <p class="font-semibold">{{ job.job_type|title }}</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Opening Date</p>
+                                    <p class="font-semibold">{{ job.opening_date|date:"d M Y" }}</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Deadline</p>
+                                    <p class="font-semibold">{{ job.deadline|date:"d M Y" }}</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Status</p>
+                                    {% if job.status == "Available" %}
+                                        <p class="font-semibold text-green-600">Available</p>
+                                    {% else %}
+                                        <p class="font-semibold text-red-500">Closed</p>
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Company Website</p>
+                                    {% if job.company_website %}
+                                        <a href="{{ job.company_website }}"
+                                           target="_blank"
+                                           class="font-semibold text-blue-600 hover:text-blue-800 break-all no-underline">
+                                            {{ job.company_website }}
+                                        </a>
+                                    {% elif job.recruiter.company_website %}
+                                        <a href="{{ job.recruiter.company_website }}"
+                                           target="_blank"
+                                           class="font-semibold text-blue-600 hover:text-blue-800 break-all no-underline">
+                                            {{ job.recruiter.company_website }}
+                                        </a>
+                                    {% else %}
+                                        <p class="font-semibold text-gray-500">Not provided</p>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-2xl border border-gray-100 p-6 shadow-sm">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Recruitment Info</h3>
+
+                            <div class="space-y-4 text-gray-700">
+                                <div>
+                                    <p class="text-sm text-gray-500">Company Name</p>
+                                    <p class="font-semibold">{{ job.company_name }}</p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Total Vacancies</p>
+                                    <p class="font-semibold">
+                                        {{ job.vacancies }}
+                                        {% if job.vacancies == 1 %}
+                                            Position
+                                        {% else %}
+                                            Positions
+                                        {% endif %}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500">Published At</p>
+                                    <p class="font-semibold">{{ job.created_at|date:"d M Y, h:i A" }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-10 pt-4">
+
+                    <a href="javascript:history.back()"
+                       class="inline-flex items-center gap-2 bg-gray-200 text-gray-800 px-6 py-3 rounded-xl font-semibold transition duration-300 hover:bg-blue-600 hover:text-white hover:shadow-[0_0_25px_rgba(59,130,246,0.45)]">
+                        ← Back
+                    </a>
+
+                    {% if request.user.is_authenticated %}
+
+    {% if request.user.role == 'job_seeker' %}
+
+        {% if job.status == "Available" %}
+
+            {% if has_applied %}
+
+                <div class="bg-green-100 text-green-700 px-5 py-3 rounded-xl font-semibold">
+                    ✓ You have already applied for this job
+                </div>
+
+            {% else %}
+
+                <a href=""
+                   class="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold transition duration-300 hover:bg-green-500 hover:shadow-[0_0_30px_rgba(34,197,94,0.85)]">
+                    Apply Now
+                </a>
+
+            {% endif %}
+
+        {% else %}
+
+            <button class="bg-gray-300 text-gray-600 px-8 py-3 rounded-xl font-semibold cursor-not-allowed">
+                Closed
+            </button>
+
+        {% endif %}
+
+    {% else %}
+
+        <p class="bg-yellow-100 text-yellow-700 px-5 py-3 rounded-xl font-semibold">
+            Only job seekers can apply
+        </p>
+
+    {% endif %}
+
+{% else %}
+
+<div class="bg-red-100 text-red-600 px-5 py-4 rounded-xl font-semibold flex items-center justify-between gap-4 flex-wrap">
+
+    <span>
+        You need to login to apply
+    </span>
+
+    <a href="{% url 'login' %}?next={{ request.path }}"
+       class="bg-red-600 text-white px-5 py-2 rounded-lg font-semibold transition duration-300 hover:bg-red-700 hover:shadow-lg">
+        Login Now
+    </a>
+
+</div>
+
+{% endif %}
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const countdownBox = document.getElementById("countdown-box");
+    if (!countdownBox) return;
+
+    const deadlineDate = countdownBox.getAttribute("data-deadline");
+    if (!deadlineDate) {
+        countdownBox.innerHTML = "Deadline not available";
+        return;
+    }
+
+    const deadline = new Date(deadlineDate + "T23:59:59").getTime();
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = deadline - now;
+
+        if (distance <= 0) {
+            countdownBox.innerHTML = "Application deadline has ended";
+            countdownBox.classList.remove("text-blue-700");
+            countdownBox.classList.add("text-red-600");
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdownBox.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s left`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+});
+</script>
+
+{% endblock %}

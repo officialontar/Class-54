@@ -216,7 +216,7 @@ The password must contain:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/officialontar/Class-52.git
+git clone https://github.com/officialontar/Class-54.git
 cd auth_role_system
 ```
 

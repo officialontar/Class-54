@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-
-
 {% block title %}
 {{ job.job_title }} - Delete Job
 {% endblock %}
@@ -19,12 +17,24 @@ Are you sure you want to delete <b>{{ job.job_title }}</b> ?
 </p>
 
 <form method="POST">
-
 {% csrf_token %}
 
-<button class="bg-red-600 text-white px-6 py-2 rounded">
+<div class="flex justify-center gap-4">
+
+<!-- Back Button -->
+<button type="button"
+onclick="history.back()"
+class="bg-gray-400 hover:bg-gray-500 hover:scale-105 text-white px-6 py-2 rounded-lg transition duration-200">
+Back
+</button>
+
+<!-- Delete Button -->
+<button type="submit"
+class="bg-red-600 hover:bg-red-700 hover:scale-105 text-white px-6 py-2 rounded-lg transition duration-200">
 Yes Delete
 </button>
+
+</div>
 
 </form>
 

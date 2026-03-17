@@ -12,4 +12,6 @@ urlpatterns = [
     path('job/delete/<int:job_id>/', views.delete_job, name='delete_job'),
     path("job/download/<int:job_id>/", views.download_job_pdf, name="download_job_pdf"),
 
+    path('job/<int:job_id>/', views.job_detail, name='job_detail'),
+
 ]

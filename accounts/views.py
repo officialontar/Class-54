@@ -1,3 +1,5 @@
+from math import e
+from multiprocessing import context
 import re
 
 from django.db.models import Q
@@ -17,7 +19,15 @@ from .models import CustomUser, RecruiterProfile, JobSeekerProfile
 
 # Create your views here.
 def home(request):
-    return render(request, 'accounts/index.html')
+
+    jobs = Job.objects.all()
+
+    context = {
+        "jobs": jobs,
+    }
+
+
+    return render(request, 'accounts/index.html' , context)
 
 
 # Registration logic here
@@ -157,22 +167,99 @@ def logout_view(request):
     return redirect('login')
 
 
+# @login_required
+# def profile(request):
+
+#     query = request.GET.get("q")
+
+#     if request.user.role == "recruiter":
+#         jobs = Job.objects.filter(recruiter=request.user.recruiterprofile)
+    
+#     elif request.user.role == "job_seeker":
+#         jobs = Job.objects.none()
+
+#     if query:
+#         jobs = jobs.filter(job_title__icontains=query)
+
+#     context = {
+#         "jobs": jobs,
+#         "today": now().date()
+#     }
+
+#     return render(request, 'accounts/profile.html', context)
+
+
+
+
+
 @login_required
 def profile(request):
 
-    query = request.GET.get("q")
+    if request.user.role == "recruiter":
 
-    jobs = Job.objects.filter(recruiter=request.user.recruiterprofile)
+        recruiter_profile, created = RecruiterProfile.objects.get_or_create(
+            user=request.user,
+            defaults={
+                "job_title": "Senior HR Manager",
+                "location": "Dhaka, Bangladesh",
+                "company_name": "ONTAR IT",
+                "company_overview": "Tech Solutions Ltd. is a fast-growing software company specializing in enterprise systems, mobile apps, and cloud services."
+            }
+        )
 
-    if query:
-        jobs = jobs.filter(job_title__icontains=query)
+        jobs = Job.objects.filter(recruiter=recruiter_profile).order_by("id")
 
-    context = {
-        "jobs": jobs,
-        "today": now().date()
-    }
+        q = request.GET.get("q", "").strip()
 
-    return render(request, 'accounts/profile.html', context)
+        if q:
+            jobs = jobs.filter(job_title__icontains=q)
+
+        context = {
+            "jobs": jobs,
+            "today": now().date(),
+        }
+
+        return render(request, "accounts/profile.html", context)
+
+    else:
+
+        profile, created = JobSeekerProfile.objects.get_or_create(
+            user=request.user,
+            defaults={
+                "title": "Frontend Developer",
+                "location": "Dhaka, Bangladesh",
+                "summary": "Passionate frontend developer with strong knowledge of HTML, CSS, Tailwind, JavaScript, and React. Looking for opportunities to build modern web apps.",
+                "skills": "HTML CSS Tailwind JavaScript React",
+                "experience": "Junior Web Developer — ABC Tech\n2024 - Present\nWorked on responsive UI, landing pages, and dashboard interfaces.",
+                "email": request.user.email if request.user.email else "john@example.com",
+                "phone": request.user.phone if request.user.phone else "+880 1234-567890",
+                "linkedin": "https://linkedin.com/in/officialontar"
+            }
+        )
+
+        updated = False
+
+        if not profile.email and request.user.email:
+            profile.email = request.user.email
+            updated = True
+
+        if not profile.phone and request.user.phone:
+            profile.phone = request.user.phone
+            updated = True
+
+        if updated:
+            profile.save()
+
+        context = {
+            "profile": profile,
+        }
+
+        return render(request, "accounts/profile.html", context)
+
+
+
+
+
 
 
 
