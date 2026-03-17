@@ -5,8 +5,10 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.utils.timezone import now
 
-from .models import Job
+from .models import Job, JobApplication
 from accounts.models import Application
+
+from .models import JobApplication
 
 
 from django.http import HttpResponse
@@ -346,3 +348,26 @@ def download_job_pdf(request, job_id):
     p.save()
 
     return response
+
+
+
+
+
+def job_detail(request, job_id):
+
+    job = get_object_or_404(Job, id=job_id)
+
+    has_applied = False
+
+    if request.user.is_authenticated:
+        has_applied = JobApplication.objects.filter(
+            job=job,
+            applicant=request.user
+        ).exists()
+
+    context = {
+        'job': job,
+        'has_applied': has_applied
+    }
+
+    return render(request, 'jobs/job_detail.html', context)
